@@ -4,8 +4,8 @@
 help: ## Show this help message
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-install: ## Install dependencies
-	uv sync
+install: ## Install dependencies (including document support)
+	uv sync --extra documents
 
 lint: ## Run linting with ruff
 	uv run ruff check .
@@ -14,13 +14,13 @@ format: ## Format code with ruff
 	uv run ruff format .
 
 typecheck: ## Run type checking with mypy
-	uv run mypy obsidian_rag_tool
+	uv run mypy vector_rag_tool
 
 test: ## Run tests
 	uv run pytest tests/
 
 security-bandit: ## Run bandit security linter
-	uv run bandit -r obsidian_rag_tool -c pyproject.toml
+	uv run bandit -r vector_rag_tool -c pyproject.toml
 
 security-pip-audit: ## Run pip-audit for dependency vulnerabilities
 	uv run pip-audit
@@ -40,14 +40,15 @@ clean: ## Remove build artifacts and cache
 	find . -type d -name __pycache__ -exec rm -rf {} +
 	find . -type f -name '*.pyc' -delete
 
-run: ## Run obsidian-rag-tool (usage: make run ARGS="...")
-	uv run obsidian-rag-tool $(ARGS)
+run: ## Run vector-rag-tool (usage: make run ARGS="...")
+	uv run vector-rag-tool $(ARGS)
 
-build: ## Build package
-	uv build
+build: ## Build package (force rebuild)
+	uv build --force-pep517
 
-install-global: ## Install globally with uv tool
-	uv tool install . --reinstall
+install-global: build ## Install globally with uv tool (rebuilds first to avoid cache issues)
+	-uv tool uninstall vector-rag-tool 2>/dev/null
+	uv tool install '.[documents]' --reinstall
 
 uninstall-global: ## Uninstall global installation
-	uv tool uninstall obsidian-rag-tool
+	uv tool uninstall vector-rag-tool

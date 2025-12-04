@@ -1,4 +1,4 @@
-"""Utility functions for obsidian-rag-tool.
+"""Utility functions for vector-rag-tool.
 
 Note: This code was generated with assistance from AI coding tools
 and has been reviewed and tested by a human.

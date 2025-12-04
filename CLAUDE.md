@@ -1,24 +1,29 @@
-# obsidian-rag-tool - Project Specification
+# vector-rag-tool - Project Specification
 
 ## Goal
 
-A Python CLI tool
+A CLI that provides local RAG (Retrieval-Augmented Generation) with Ollama embeddings and FAISS vector search.
 
-## What is obsidian-rag-tool?
+## What is vector-rag-tool?
 
-`obsidian-rag-tool` is a command-line utility built with modern Python tooling and best practices.
+`vector-rag-tool` is a CLI that provides semantic code search and document retrieval using vector embeddings. It indexes codebases and documents into vector stores for fast similarity search, using Ollama for local embeddings and FAISS for vector storage.
 
 ## Technical Requirements
 
 ### Runtime
 
-- Python 3.14+
+- Python 3.13+
 - Installable globally with mise
 - Cross-platform (macOS, Linux, Windows)
 
 ### Dependencies
 
 - `click` - CLI framework
+- `faiss-cpu` - Vector similarity search
+- `ollama` - Local LLM embeddings
+- `pydantic` - Data validation
+- `boto3` - AWS SDK (for S3 Vectors backend)
+- `tqdm` - Progress bars
 
 ### Development Dependencies
 
@@ -29,13 +34,13 @@ A Python CLI tool
 - `pip-audit` - Dependency vulnerability scanning
 - `gitleaks` - Secret detection (requires separate installation)
 
-## CLI Arguments
+## CLI Commands
 
 ```bash
-obsidian-rag-tool [OPTIONS]
+vector-rag-tool [OPTIONS] COMMAND [ARGS]
 ```
 
-### Options
+### Global Options
 
 - `-v, --verbose` - Enable verbose output (count flag: -v, -vv, -vvv)
   - `-v` (count=1): INFO level logging
@@ -44,26 +49,49 @@ obsidian-rag-tool [OPTIONS]
 - `--help` / `-h` - Show help message
 - `--version` - Show version
 
+### Commands
+
+- `index` - Index files matching glob patterns into a vector store
+- `query` - Query a vector store for relevant document chunks
+- `store` - Manage vector stores (create, delete, list, info)
+- `completion` - Generate shell completion script
+
 ## Project Structure
 
 ```
-obsidian-rag-tool/
-├── obsidian_rag_tool/
+vector-rag-tool/
+├── vector_rag_tool/
 │   ├── __init__.py
-│   ├── cli.py            # Click CLI entry point (group with subcommands)
-│   ├── completion.py     # Shell completion command
-│   ├── logging_config.py # Multi-level verbosity logging
-│   └── utils.py          # Utility functions
-├── tests/
-│   ├── __init__.py
-│   └── test_utils.py
-├── pyproject.toml        # Project configuration
-├── README.md             # User documentation
-├── CLAUDE.md             # This file
-├── Makefile              # Development commands
-├── LICENSE               # MIT License
-├── .mise.toml            # mise configuration
-├── .gitleaks.toml        # Gitleaks configuration
+│   ├── cli.py              # Click CLI entry point (group with subcommands)
+│   ├── completion.py       # Shell completion command
+│   ├── logging_config.py   # Multi-level verbosity logging
+│   ├── utils.py            # Utility functions
+│   ├── commands/           # CLI subcommands
+│   │   ├── index.py        # Index command
+│   │   ├── query.py        # Query command
+│   │   └── store.py        # Store management commands
+│   ├── core/               # Core functionality
+│   │   ├── backend.py      # Backend interface
+│   │   ├── backend_factory.py
+│   │   ├── chunking.py     # Text chunking
+│   │   ├── embeddings.py   # Ollama embeddings
+│   │   ├── faiss_backend.py
+│   │   ├── file_detector.py
+│   │   ├── models.py       # Data models
+│   │   └── s3vectors_backend.py
+│   └── services/           # Business logic
+│       ├── indexer.py
+│       └── querier.py
+├── tests/                  # Test suite
+├── plugins/                # Claude Code plugin
+├── references/             # Design documentation
+├── pyproject.toml          # Project configuration
+├── README.md               # User documentation
+├── CLAUDE.md               # This file
+├── Makefile                # Development commands
+├── LICENSE                 # MIT License
+├── .mise.toml              # mise configuration
+├── .gitleaks.toml          # Gitleaks configuration
 └── .gitignore
 ```
 
@@ -138,7 +166,7 @@ The template includes a centralized logging system with progressive verbosity le
 
 2. **CLI Integration** - Add to every CLI command
    ```python
-   from obsidian_rag_tool.logging_config import get_logger, setup_logging
+   from vector_rag_tool.logging_config import get_logger, setup_logging
 
    logger = get_logger(__name__)
 
@@ -184,7 +212,7 @@ The template includes shell completion for bash, zsh, and fish following the Cli
 
 2. **CLI Integration** - Added as subcommand
    ```python
-   from obsidian_rag_tool.completion import completion_command
+   from vector_rag_tool.completion import completion_command
 
    @click.group(invoke_without_command=True)
    def main(ctx: click.Context):
@@ -200,12 +228,12 @@ The template includes shell completion for bash, zsh, and fish following the Cli
 3. **Usage Pattern** - User-friendly command
    ```bash
    # Generate completion script
-   obsidian-rag-tool completion bash
-   obsidian-rag-tool completion zsh
-   obsidian-rag-tool completion fish
+   vector-rag-tool completion bash
+   vector-rag-tool completion zsh
+   vector-rag-tool completion fish
 
    # Install (eval or save to file)
-   eval "$(obsidian-rag-tool completion bash)"
+   eval "$(vector-rag-tool completion bash)"
    ```
 
 4. **Supported Shells**
@@ -215,7 +243,7 @@ The template includes shell completion for bash, zsh, and fish following the Cli
    - **PowerShell** - Not supported by Click
 
 5. **Installation Methods**
-   - **Temporary**: `eval "$(obsidian-rag-tool completion bash)"`
+   - **Temporary**: `eval "$(vector-rag-tool completion bash)"`
    - **Permanent**: Add eval to ~/.bashrc or ~/.zshrc
    - **File-based** (recommended): Save to dedicated completion file
 
@@ -223,10 +251,10 @@ The template includes shell completion for bash, zsh, and fish following the Cli
 
 The CLI uses `@click.group()` for extensibility. To add new commands:
 
-1. Create new command module in `obsidian_rag_tool/`
+1. Create new command module in `vector_rag_tool/`
 2. Import and add to CLI group:
    ```python
-   from obsidian_rag_tool.new_command import new_command
+   from vector_rag_tool.new_command import new_command
    main.add_command(new_command)
    ```
 
@@ -237,17 +265,17 @@ The CLI uses `@click.group()` for extensibility. To add new commands:
 ### Global installation with mise
 
 ```bash
-cd /path/to/obsidian-rag-tool
+cd /path/to/vector-rag-tool
 mise use -g python@3.14
 uv sync
 uv tool install .
 ```
 
-After installation, `obsidian-rag-tool` command is available globally.
+After installation, `vector-rag-tool` command is available globally.
 
 ### Local development
 
 ```bash
 uv sync
-uv run obsidian-rag-tool [args]
+uv run vector-rag-tool [args]
 ```

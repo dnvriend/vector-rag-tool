@@ -1,7 +1,7 @@
-# Gitleaks configuration for obsidian-rag-tool
+# Gitleaks configuration for vector-rag-tool
 # See: https://github.com/gitleaks/gitleaks
 
-title = "gitleaks config for obsidian-rag-tool"
+title = "gitleaks config for vector-rag-tool"
 
 [extend]
 # Use default gitleaks rules

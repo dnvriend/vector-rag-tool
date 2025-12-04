@@ -40,20 +40,62 @@ def setup_logging(verbose_count: int = 0) -> None:
     else:
         level = logging.WARNING
 
+    # Configure format - all levels include module name for traceability
+    if verbose_count >= 2:
+        # Detailed format for DEBUG (includes line number)
+        fmt = "[%(levelname)s] %(name)s:%(lineno)d - %(message)s"
+    else:
+        # Standard format for INFO/WARNING (module name, no line number)
+        fmt = "[%(levelname)s] %(name)s - %(message)s"
+
     # Configure root logger
     logging.basicConfig(
         level=level,
-        format="[%(levelname)s] %(message)s",
+        format=fmt,
         stream=sys.stderr,
         force=True,  # Override any existing configuration
     )
 
+    # Libraries used by this project that need logging configuration
+    # - boto3/botocore: AWS SDK for S3 Vectors backend
+    # - urllib3: HTTP client used by boto3
+    # - ollama: Local LLM embeddings
+    # - httpx/httpcore: HTTP client used by ollama
+    # - langchain/langchain_text_splitters: Text chunking
+    # - langchain_core: Core langchain utilities
+    # - faiss: Vector similarity search (C library, no Python logging)
+    # - numpy: Numerical operations (minimal logging)
+    # - tqdm: Progress bars
+    # - pyyaml: YAML parsing
+    # - openai: Optional OpenAI integration for image descriptions
+    trace_libraries = [
+        # AWS SDK
+        "boto3",
+        "botocore",
+        "urllib3",
+        # Ollama and HTTP
+        "ollama",
+        "httpx",
+        "httpcore",
+        # LangChain
+        "langchain",
+        "langchain_core",
+        "langchain_text_splitters",
+        # OpenAI (optional)
+        "openai",
+        # Other
+        "tqdm",
+    ]
+
     # Configure dependent library loggers at TRACE level (-vvv)
-    # Add your project-specific library loggers here
-    # Example:
-    #   if verbose_count >= 3:
-    #       logging.getLogger("requests").setLevel(logging.DEBUG)
-    #       logging.getLogger("urllib3").setLevel(logging.DEBUG)
+    if verbose_count >= 3:
+        # Enable library internals for trace-level debugging
+        for lib in trace_libraries:
+            logging.getLogger(lib).setLevel(logging.DEBUG)
+    else:
+        # Suppress noisy libraries at lower verbosity levels
+        for lib in trace_libraries:
+            logging.getLogger(lib).setLevel(logging.WARNING)
 
 
 def get_logger(name: str) -> logging.Logger:

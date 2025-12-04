@@ -3,23 +3,23 @@
 ## Overview
 
 This project includes a pre-configured Claude Code marketplace and plugin structure that enables:
-- **Slash Commands**: Quick CLI invocations (e.g., `/obsidian-rag-tool:help`)
-- **Skills**: Comprehensive documentation with progressive disclosure (e.g., `/skill-obsidian-rag-tool`)
+- **Slash Commands**: Quick CLI invocations (e.g., `/vector-rag-tool:help`)
+- **Skills**: Comprehensive documentation with progressive disclosure (e.g., `/skill-vector-rag-tool`)
 
 ## Structure
 
 ```
-obsidian-rag-tool/
+vector-rag-tool/
 ├── .claude-plugin/
 │   └── marketplace.json          # Marketplace definition
 └── plugins/
-    └── obsidian-rag-tool/
+    └── vector-rag-tool/
         ├── .claude-plugin/
         │   └── plugin.json       # Plugin metadata
         ├── commands/              # Slash commands (SHORT)
         │   └── help.md           # General help command
         └── skills/                # Skills (COMPREHENSIVE)
-            └── obsidian-rag-tool/
+            └── vector-rag-tool/
                 └── SKILL.md      # Comprehensive skill documentation
 ```
 
@@ -34,7 +34,7 @@ Contains:
 
 ## Plugin Configuration
 
-**File**: `plugins/obsidian-rag-tool/.claude-plugin/plugin.json`
+**File**: `plugins/vector-rag-tool/.claude-plugin/plugin.json`
 
 Contains:
 - Plugin name and description
@@ -43,7 +43,7 @@ Contains:
 
 ## Slash Commands
 
-**Location**: `plugins/obsidian-rag-tool/commands/`
+**Location**: `plugins/vector-rag-tool/commands/`
 
 **Purpose**: Short, focused command documentation
 
@@ -65,20 +65,20 @@ Brief explanation.
 **Default Command**: `help.md` - Shows CLI help information
 
 **Adding New Commands**:
-1. Create `plugins/obsidian-rag-tool/commands/<command>.md`
+1. Create `plugins/vector-rag-tool/commands/<command>.md`
 2. Add frontmatter with description and argument-hint
 3. Keep it short (≤ 1 screen)
 4. Include 2-3 practical examples
 
 **Usage in Claude Code**:
 ```
-/obsidian-rag-tool:help
-/obsidian-rag-tool:command "argument"
+/vector-rag-tool:help
+/vector-rag-tool:command "argument"
 ```
 
 ## Skills
 
-**Location**: `plugins/obsidian-rag-tool/skills/obsidian-rag-tool/SKILL.md`
+**Location**: `plugins/vector-rag-tool/skills/vector-rag-tool/SKILL.md`
 
 **Purpose**: Comprehensive documentation with progressive disclosure
 
@@ -109,12 +109,12 @@ The included `SKILL.md` is a skeleton with TODO comments. As your CLI tool evolv
 
 **Usage in Claude Code**:
 ```
-/skill-obsidian-rag-tool
+/skill-vector-rag-tool
 ```
 
 Or:
 ```
-Use the skill-obsidian-rag-tool to help me understand this tool
+Use the skill-vector-rag-tool to help me understand this tool
 ```
 
 ## Critical Requirements
@@ -140,7 +140,7 @@ Use the skill-obsidian-rag-tool to help me understand this tool
 When you add a new CLI command:
 
 1. **Update the slash command** (optional):
-   - Create `plugins/obsidian-rag-tool/commands/<command>.md`
+   - Create `plugins/vector-rag-tool/commands/<command>.md`
    - Follow the short format template
    - Keep it ≤ 1 screen
 
@@ -155,7 +155,7 @@ When you add a new CLI command:
 Keep versions synchronized across:
 1. `pyproject.toml` → `[project] version = "X.Y.Z"`
 2. `.claude-plugin/marketplace.json` → `metadata.version`
-3. `plugins/obsidian-rag-tool/.claude-plugin/plugin.json` → `version`
+3. `plugins/vector-rag-tool/.claude-plugin/plugin.json` → `version`
 
 ## Testing
 
@@ -165,19 +165,19 @@ Keep versions synchronized across:
 cat .claude-plugin/marketplace.json | jq '.'
 
 # Check plugin
-cat plugins/obsidian-rag-tool/.claude-plugin/plugin.json | jq '.'
+cat plugins/vector-rag-tool/.claude-plugin/plugin.json | jq '.'
 
 # List commands
-ls plugins/obsidian-rag-tool/commands/
+ls plugins/vector-rag-tool/commands/
 
 # Check skill
-cat plugins/obsidian-rag-tool/skills/obsidian-rag-tool/SKILL.md
+cat plugins/vector-rag-tool/skills/vector-rag-tool/SKILL.md
 ```
 
 ### Test in Claude Code
 1. Open your project in Claude Code
-2. Try slash command: `/obsidian-rag-tool:help`
-3. Try skill: `/skill-obsidian-rag-tool`
+2. Try slash command: `/vector-rag-tool:help`
+3. Try skill: `/skill-vector-rag-tool`
 
 ## Resources
 

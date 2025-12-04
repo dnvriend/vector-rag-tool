@@ -1,4 +1,4 @@
-"""Completion command for obsidian-rag-tool.
+"""Completion command for vector-rag-tool.
 
 Note: This code was generated with assistance from AI coding tools
 and has been reviewed and tested by a human.
@@ -19,33 +19,33 @@ def completion_command(shell: str) -> None:
 
     \b
     # Bash (add to ~/.bashrc):
-    eval "$(obsidian-rag-tool completion bash)"
+    eval "$(vector-rag-tool completion bash)"
 
     \b
     # Zsh (add to ~/.zshrc):
-    eval "$(obsidian-rag-tool completion zsh)"
+    eval "$(vector-rag-tool completion zsh)"
 
     \b
-    # Fish (add to ~/.config/fish/completions/obsidian-rag-tool.fish):
-    obsidian-rag-tool completion fish > ~/.config/fish/completions/obsidian-rag-tool.fish
+    # Fish (add to ~/.config/fish/completions/vector-rag-tool.fish):
+    vector-rag-tool completion fish > ~/.config/fish/completions/vector-rag-tool.fish
 
     \b
     File-based Installation (Recommended for better performance):
 
     \b
     # Bash
-    obsidian-rag-tool completion bash > ~/.obsidian-rag-tool-complete.bash
-    echo 'source ~/.obsidian-rag-tool-complete.bash' >> ~/.bashrc
+    vector-rag-tool completion bash > ~/.vector-rag-tool-complete.bash
+    echo 'source ~/.vector-rag-tool-complete.bash' >> ~/.bashrc
 
     \b
     # Zsh
-    obsidian-rag-tool completion zsh > ~/.obsidian-rag-tool-complete.zsh
-    echo 'source ~/.obsidian-rag-tool-complete.zsh' >> ~/.zshrc
+    vector-rag-tool completion zsh > ~/.vector-rag-tool-complete.zsh
+    echo 'source ~/.vector-rag-tool-complete.zsh' >> ~/.zshrc
 
     \b
     # Fish (automatic loading)
     mkdir -p ~/.config/fish/completions
-    obsidian-rag-tool completion fish > ~/.config/fish/completions/obsidian-rag-tool.fish
+    vector-rag-tool completion fish > ~/.config/fish/completions/vector-rag-tool.fish
 
     \b
     Supported Shells:
@@ -70,8 +70,8 @@ def completion_command(shell: str) -> None:
         completer = completion_class(
             cli=ctx.find_root().command,
             ctx_args={},
-            prog_name="obsidian-rag-tool",
-            complete_var="_OBSIDIAN_RAG_TOOL_COMPLETE",
+            prog_name="vector-rag-tool",
+            complete_var="_VECTOR_RAG_TOOL_COMPLETE",
         )
         click.echo(completer.source())
     else:

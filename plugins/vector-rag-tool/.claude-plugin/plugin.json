@@ -1,5 +1,5 @@
 {
-    "name": "obsidian-rag-tool",
+    "name": "vector-rag-tool",
     "description": "A Python CLI tool",
     "version": "0.1.0",
     "author": {
