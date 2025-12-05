@@ -18,6 +18,21 @@ authors = [
 ]
 license = {text = "MIT"}
 readme = "README.md"
+keywords = ["rag", "vector-search", "faiss", "ollama", "embeddings", "semantic-search", "cli"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Text Processing :: Indexing",
+]
+
+[project.urls]
+Homepage = "https://github.com/dnvriend/vector-rag-tool"
+Repository = "https://github.com/dnvriend/vector-rag-tool"
+Issues = "https://github.com/dnvriend/vector-rag-tool/issues"
 
 [project.scripts]
 vector-rag-tool = "vector_rag_tool.cli:main"
