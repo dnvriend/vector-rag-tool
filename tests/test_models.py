@@ -14,7 +14,14 @@ from pathlib import Path
 
 import pytest
 
-from vector_rag_tool.core.models import Chunk, ChunkMetadata, QueryResult, Store, StoreType
+from vector_rag_tool.core.models import (
+    Chunk,
+    ChunkMetadata,
+    QueryResult,
+    SimilarityLevel,
+    Store,
+    StoreType,
+)
 
 
 class TestStoreType:
@@ -32,6 +39,59 @@ class TestStoreType:
         assert isinstance(StoreType.OBISIDIAN, str)
         # Test that it can be compared to strings directly
         assert StoreType.OBISIDIAN == "obsidian"
+
+
+class TestSimilarityLevel:
+    """Test the SimilarityLevel enum."""
+
+    def test_similarity_level_values(self) -> None:
+        """Test that SimilarityLevel has expected values."""
+        assert SimilarityLevel.DUPLICATE == "duplicate"
+        assert SimilarityLevel.VERY_SIMILAR == "very_similar"
+        assert SimilarityLevel.RELATED == "related"
+        assert SimilarityLevel.UNRELATED == "unrelated"
+        assert SimilarityLevel.CONTRADICTION == "contradiction"
+
+    def test_from_score_duplicate(self) -> None:
+        """Test score classification for duplicate range (>=0.85)."""
+        assert SimilarityLevel.from_score(1.0) == SimilarityLevel.DUPLICATE
+        assert SimilarityLevel.from_score(0.95) == SimilarityLevel.DUPLICATE
+        assert SimilarityLevel.from_score(0.85) == SimilarityLevel.DUPLICATE
+
+    def test_from_score_very_similar(self) -> None:
+        """Test score classification for very_similar range (0.60-0.84)."""
+        assert SimilarityLevel.from_score(0.84) == SimilarityLevel.VERY_SIMILAR
+        assert SimilarityLevel.from_score(0.75) == SimilarityLevel.VERY_SIMILAR
+        assert SimilarityLevel.from_score(0.60) == SimilarityLevel.VERY_SIMILAR
+
+    def test_from_score_related(self) -> None:
+        """Test score classification for related range (0.30-0.59)."""
+        assert SimilarityLevel.from_score(0.59) == SimilarityLevel.RELATED
+        assert SimilarityLevel.from_score(0.50) == SimilarityLevel.RELATED
+        assert SimilarityLevel.from_score(0.30) == SimilarityLevel.RELATED
+
+    def test_from_score_unrelated(self) -> None:
+        """Test score classification for unrelated range (0.00-0.29)."""
+        assert SimilarityLevel.from_score(0.29) == SimilarityLevel.UNRELATED
+        assert SimilarityLevel.from_score(0.15) == SimilarityLevel.UNRELATED
+        assert SimilarityLevel.from_score(0.00) == SimilarityLevel.UNRELATED
+
+    def test_from_score_contradiction(self) -> None:
+        """Test score classification for contradiction range (<0.0)."""
+        assert SimilarityLevel.from_score(-0.01) == SimilarityLevel.CONTRADICTION
+        assert SimilarityLevel.from_score(-0.50) == SimilarityLevel.CONTRADICTION
+        assert SimilarityLevel.from_score(-1.0) == SimilarityLevel.CONTRADICTION
+
+    def test_description(self) -> None:
+        """Test human-readable descriptions."""
+        assert SimilarityLevel.DUPLICATE.description() == "Near-duplicate or exact match"
+        assert (
+            SimilarityLevel.VERY_SIMILAR.description()
+            == "Very similar (paraphrases, close variants)"
+        )
+        assert SimilarityLevel.RELATED.description() == "Semantically related topics"
+        assert SimilarityLevel.UNRELATED.description() == "Unrelated content"
+        assert SimilarityLevel.CONTRADICTION.description() == "Contradictory or opposing concepts"
 
 
 class TestStore:

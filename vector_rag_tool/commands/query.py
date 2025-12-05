@@ -14,6 +14,7 @@ from typing import Any
 import click
 
 from vector_rag_tool.core.backend_factory import get_backend
+from vector_rag_tool.core.models import SimilarityLevel
 from vector_rag_tool.logging_config import get_logger, setup_logging
 from vector_rag_tool.services.querier import Querier
 
@@ -258,8 +259,13 @@ def _output_text(result: Any, query: str, store: str, top_k: int) -> None:
     click.echo()
 
     for i, (chunk, score) in enumerate(result.get_sorted_chunks(), 1):
-        # Header with score
-        click.echo(f"{i}. Score: {score:.3f}")
+        # Get similarity level
+        similarity_level = SimilarityLevel.from_score(score)
+
+        # Header with score and similarity level
+        click.echo(
+            f"{i}. Score: {score:.3f} ({similarity_level.value}: {similarity_level.description()})"
+        )
 
         # File path and line numbers
         metadata = chunk.metadata
@@ -294,9 +300,12 @@ def _output_json(result: Any, query: str, store: str, top_k: int) -> None:
 
     for chunk, score in result.get_sorted_chunks():
         metadata = chunk.metadata
+        similarity_level = SimilarityLevel.from_score(score)
 
         result_item = {
             "score": score,
+            "similarity_level": similarity_level.value,
+            "similarity_description": similarity_level.description(),
             "file_path": str(metadata.source_file),
             "line_start": metadata.line_start,
             "line_end": metadata.line_end,

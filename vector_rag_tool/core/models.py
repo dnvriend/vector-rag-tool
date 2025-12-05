@@ -23,6 +23,56 @@ class StoreType(str, Enum):
     CUSTOM = "custom"
 
 
+class SimilarityLevel(str, Enum):
+    """Human-readable similarity level interpretation for cosine similarity scores."""
+
+    DUPLICATE = "duplicate"
+    VERY_SIMILAR = "very_similar"
+    RELATED = "related"
+    UNRELATED = "unrelated"
+    CONTRADICTION = "contradiction"
+
+    @classmethod
+    def from_score(cls, score: float) -> "SimilarityLevel":
+        """
+        Convert cosine similarity score to human-readable level.
+
+        Args:
+            score: Cosine similarity score (-1 to 1)
+
+        Returns:
+            SimilarityLevel enum value
+
+        Score Mapping:
+            >= 0.85: DUPLICATE (near-duplicate or exact match)
+            >= 0.60: VERY_SIMILAR (paraphrases, close variants)
+            >= 0.30: RELATED (semantically related topics)
+            >= 0.00: UNRELATED (perpendicular, no clear relation)
+            <  0.00: CONTRADICTION (antonyms, opposing concepts)
+        """
+        if score >= 0.85:
+            return cls.DUPLICATE
+        elif score >= 0.60:
+            return cls.VERY_SIMILAR
+        elif score >= 0.30:
+            return cls.RELATED
+        elif score >= 0.00:
+            return cls.UNRELATED
+        else:
+            return cls.CONTRADICTION
+
+    def description(self) -> str:
+        """Get human-readable description of similarity level."""
+        descriptions = {
+            SimilarityLevel.DUPLICATE: "Near-duplicate or exact match",
+            SimilarityLevel.VERY_SIMILAR: "Very similar (paraphrases, close variants)",
+            SimilarityLevel.RELATED: "Semantically related topics",
+            SimilarityLevel.UNRELATED: "Unrelated content",
+            SimilarityLevel.CONTRADICTION: "Contradictory or opposing concepts",
+        }
+        return descriptions[self]
+
+
 @dataclass
 class Store:
     """
